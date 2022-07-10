@@ -1,0 +1,8 @@
+/home/khangnt-leo/CLionProjects/ServerProject/cmake-build-debug/CMakeFiles/server.dir
+/home/khangnt-leo/CLionProjects/ServerProject/cmake-build-debug/CMakeFiles/client1.dir
+/home/khangnt-leo/CLionProjects/ServerProject/cmake-build-debug/CMakeFiles/client2.dir
+/home/khangnt-leo/CLionProjects/ServerProject/cmake-build-debug/CMakeFiles/client3.dir
+/home/khangnt-leo/CLionProjects/ServerProject/cmake-build-debug/CMakeFiles/client4.dir
+/home/khangnt-leo/CLionProjects/ServerProject/cmake-build-debug/CMakeFiles/test.dir
+/home/khangnt-leo/CLionProjects/ServerProject/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/khangnt-leo/CLionProjects/ServerProject/cmake-build-debug/CMakeFiles/rebuild_cache.dir
