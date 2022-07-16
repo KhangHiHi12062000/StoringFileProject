@@ -77,14 +77,14 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "server::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-server-Debug-e8b354dac1e26cd2d1fd.json",
+					"jsonFile" : "target-server-Debug-52b2ccdae0a5756ad3eb.json",
 					"name" : "server",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "test::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-test-Debug-d4a010c91cdbcebe5084.json",
+					"jsonFile" : "target-test-Debug-546c04941921639ec69a.json",
 					"name" : "test",
 					"projectIndex" : 0
 				}

@@ -11,7 +11,7 @@
 
 #define SERVER_ADDR "127.0.0.1"
 #define SERVER_PORT 8080
-#define BUFF_SIZE 1024
+#define BUFF_SIZE 512
 
 int main(){
     int client_sock;
@@ -40,7 +40,8 @@ int main(){
     while(1){
         printf("\nInsert string to send:");
         memset(buff,'\0',(strlen(buff)+1));
-        fgets(buff, BUFF_SIZE, stdin);
+        //fgets(buff, BUFF_SIZE, stdin);
+        scanf("%s",buff);
         msg_len = strlen(buff);
 
         bytes_sent = send(client_sock, buff, msg_len, 0);
@@ -52,6 +53,7 @@ int main(){
         if (bytes_received < 0)
             perror("\nError: ");
         else if (bytes_received == 0)
+            printf("%s",buff);
             printf("Connection closed.\n");
 
         buff[bytes_received] = '\0';

@@ -3,7 +3,9 @@
 //
 
 #pragma once
-#include "net.h"
+#include "file.h"
+#include "server.h"
+
 
 //Request codes
 #define CREATE_FOLDER	'0'
@@ -17,11 +19,14 @@
 #define ERROR	        '8'
 #define EXIT             '9'
 
-//Error codes
+#define DATA_BLOCK 1024
 
-
-int GetRequestData(char *buff, char opcode, char *filename, char *username, unsigned short *numBlock);
+int GetRequestData(char *buff, char *opcode, char *filename, char *username, unsigned short *numBlock);
 char *eatString(char *buff, char *str);
-char *eatByte(char *buff, unsigned short *opcode);
-int main();
+char *eatByte(char *buff, unsigned short *numBlock);
+char *writeString(char *buff, char *str);
+char *writeBytes(char *buff, unsigned short *numBlock);
+char *writeBytel(char *buff, unsigned long *numBlock);
+void create_Folder(char *path);
+int copy(char *dest, char *src, int *size);
 

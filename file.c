@@ -96,3 +96,7 @@ void sizeToH(unsigned long size, char *buff, size_t max_len){
 
     snprintf(buff, max_len, "%4.1f %s", s, mj);
 }
+void createNewFolder(char *path){
+    //mkdir(path,  S_IRWXU | S_IRWXG | S_IRWXO);
+    int result = mkdir(path, 0777);
+}

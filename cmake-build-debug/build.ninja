@@ -55,8 +55,14 @@ build CMakeFiles/server.dir/server.c.o: C_COMPILER__server_Debug /home/khangnt-l
   OBJECT_DIR = CMakeFiles/server.dir
   OBJECT_FILE_DIR = CMakeFiles/server.dir
 
-build CMakeFiles/server.dir/net.c.o: C_COMPILER__server_Debug /home/khangnt-leo/CLionProjects/ServerProject/net.c || cmake_object_order_depends_target_server
-  DEP_FILE = CMakeFiles/server.dir/net.c.o.d
+build CMakeFiles/server.dir/file.c.o: C_COMPILER__server_Debug /home/khangnt-leo/CLionProjects/ServerProject/file.c || cmake_object_order_depends_target_server
+  DEP_FILE = CMakeFiles/server.dir/file.c.o.d
+  FLAGS = -g -std=gnu99
+  OBJECT_DIR = CMakeFiles/server.dir
+  OBJECT_FILE_DIR = CMakeFiles/server.dir
+
+build CMakeFiles/server.dir/tfp.c.o: C_COMPILER__server_Debug /home/khangnt-leo/CLionProjects/ServerProject/tfp.c || cmake_object_order_depends_target_server
+  DEP_FILE = CMakeFiles/server.dir/tfp.c.o.d
   FLAGS = -g -std=gnu99
   OBJECT_DIR = CMakeFiles/server.dir
   OBJECT_FILE_DIR = CMakeFiles/server.dir
@@ -69,7 +75,7 @@ build CMakeFiles/server.dir/net.c.o: C_COMPILER__server_Debug /home/khangnt-leo/
 #############################################
 # Link the executable server
 
-build server: C_EXECUTABLE_LINKER__server_Debug CMakeFiles/server.dir/server.c.o CMakeFiles/server.dir/net.c.o
+build server: C_EXECUTABLE_LINKER__server_Debug CMakeFiles/server.dir/server.c.o CMakeFiles/server.dir/file.c.o CMakeFiles/server.dir/tfp.c.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/server.dir
   POST_BUILD = :
@@ -216,6 +222,12 @@ build CMakeFiles/test.dir/tfp.c.o: C_COMPILER__test_Debug /home/khangnt-leo/CLio
   OBJECT_DIR = CMakeFiles/test.dir
   OBJECT_FILE_DIR = CMakeFiles/test.dir
 
+build CMakeFiles/test.dir/file.c.o: C_COMPILER__test_Debug /home/khangnt-leo/CLionProjects/ServerProject/file.c || cmake_object_order_depends_target_test
+  DEP_FILE = CMakeFiles/test.dir/file.c.o.d
+  FLAGS = -g -std=gnu99
+  OBJECT_DIR = CMakeFiles/test.dir
+  OBJECT_FILE_DIR = CMakeFiles/test.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target test
@@ -224,7 +236,7 @@ build CMakeFiles/test.dir/tfp.c.o: C_COMPILER__test_Debug /home/khangnt-leo/CLio
 #############################################
 # Link the executable test
 
-build test: C_EXECUTABLE_LINKER__test_Debug CMakeFiles/test.dir/tfp.c.o
+build test: C_EXECUTABLE_LINKER__test_Debug CMakeFiles/test.dir/tfp.c.o CMakeFiles/test.dir/file.c.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/test.dir
   POST_BUILD = :
