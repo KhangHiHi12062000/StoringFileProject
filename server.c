@@ -56,9 +56,9 @@ pthread_mutex_lock(&lock);
             break;
         case LIST_DIR:
             cliptr = eatString(cliptr+1, username);
-            strcpy(cdirectory,SERVER_ROOT);
-            strcat(cdirectory,"/");
-            strcat(cdirectory,username);
+//            strcpy(cdirectory,SERVER_ROOT);
+//            strcat(cdirectory,"/");
+//            strcat(cdirectory,username);
             buffer[0] = '2';
             buff_size += 1;
             File *list=listFiles(cdirectory);
@@ -89,8 +89,9 @@ pthread_mutex_lock(&lock);
                 //tmpptr = strcat(tmpptr, flist->name);
                 copy(bufptr+buff_size,flist->name,&len);
                 buff_size = buff_size + len;
-                //strcpy(bufptr+buff_size,file_size);
-                //buff_size += 2;
+                *(bufptr+buff_size) = flist->name[0];
+                *(bufptr+buff_size+1) = flist->name[1];
+                buff_size += 2;
                 printf("%s\n",flist->name);
                 flist = flist->next;
             }
