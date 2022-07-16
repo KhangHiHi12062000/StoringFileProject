@@ -85,9 +85,10 @@ pthread_mutex_lock(&lock);
                     size=size+512;
                     data=(char*)realloc(data, size*sizeof(char));
                 }
+                //2name\0kjname2\0mn...
                 //tmpptr = strcat(tmpptr, flist->name);
-                //copy(bufptr+buff_size,flist->name,&len);
-                //buff_size = buff_size + len;
+                copy(bufptr+buff_size,flist->name,&len);
+                buff_size = buff_size + len;
                 //strcpy(bufptr+buff_size,file_size);
                 //buff_size += 2;
                 printf("%s\n",flist->name);

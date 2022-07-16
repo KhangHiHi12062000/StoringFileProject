@@ -103,11 +103,20 @@ void create_Folder(char *path){
 }
 
 //void main(){
-//    char path[500];
-//    unsigned long num = 21474;
-//    writeBytel(path,num);
-//    for (int i = 0; i < strlen(path); i++) {
-//        printf("- %c\n",path[i]);
+//    char path[500]={'a','b','c'};
+//    char *ptr;
+//    ptr = path;
+//    int p=4;
+//    char src1[500]="adfhkhjfdak";
+//    char src2[500]="243897298347";
+//    int size;
+//    copy(ptr+4 ,src1,&size);
+//    p = p + size;
+//    copy(ptr + p,src2,&size);
+//
+//    p = p + size;
+//    for (int i = 0; i < 34; ++i) {
+//        printf("%c",path[i]);
 //    }
-//    printf("%d",strlen(path));
+//    printf("%d",p);
 //}
