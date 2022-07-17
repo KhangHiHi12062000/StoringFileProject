@@ -1,24 +1,5 @@
 #include "server.h"
 
-//void sigchld_handler(int sig){
-//    pid_t pid;
-//    int status;
-//    while(waitpid(-1, &status, WNOHANG)>0)
-//        printf("\nChild %d terminated\n",pid);
-//}
-//
-//void AddSigAction(){
-//    struct sigaction sa;
-//    sa.sa_handler=sigchld_handler;
-//    sigemptyset(&sa.sa_mask);
-//    sa.sa_flags=SA_RESTART;
-//
-//    if(sigaction(SIGCHLD, &sa, NULL)==-1){
-//        printf("\x1B[33mERROR:\x1B[0m Sigaction error. %s\n", strerror(errno));
-//        exit(1);
-//    }
-//}
-//
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 void  socketThread(int  clientSocket)
 {   char cdirectory[255];
@@ -28,11 +9,10 @@ void  socketThread(int  clientSocket)
     int newSocket = clientSocket;
     int loop = 1;
     while(loop) {
-
-        cliptr = client_message;
         if(recv(newSocket, client_message, BUFF_SIZE, 0)>0) {
             //reset 1 buffer
-
+            //printf("%s",client_message);
+            cliptr = client_message;
             char buffer[BUFF_SIZE];
             bufptr = buffer;
             buff_size = 0;
@@ -44,6 +24,8 @@ void  socketThread(int  clientSocket)
             char *username = malloc(sizeof(char) * BUFF_SIZE);
             //char *cdirectory = malloc(sizeof(char)*BUFF_SIZE);
             char *filename = malloc(BUFF_SIZE * sizeof(char));
+            memset(username,0,BUFF_SIZE);
+            memset(filename,0,BUFF_SIZE);
             *opcode = client_message[0];
             switch (*opcode) {
                 case CREATE_FOLDER:
@@ -53,7 +35,7 @@ void  socketThread(int  clientSocket)
                     strcat(cdirectory, username);
                     sleep(1);
                     create_Folder(cdirectory);
-                    send(newSocket, "asdf", 10, 0);
+                    send(newSocket, "0", 10, 0);
                     break;
                 case LIST_DIR:
                     cliptr = eatString(cliptr + 1, username);
@@ -64,8 +46,8 @@ void  socketThread(int  clientSocket)
                     buff_size += 1;
                     File *list = listFiles(cdirectory);
                     File *flist = list;
-                    char *data = (char *) malloc(BUFF_SIZE * sizeof(char));
-                    data[0] = 0;
+                    //char *data = (char *) malloc(BUFF_SIZE * sizeof(char));
+                    //data[0] = 0;
 
                     while (flist != NULL) {
                         int nlen = strlen(flist->name);
@@ -83,10 +65,10 @@ void  socketThread(int  clientSocket)
                             slen = strlen(file_size);
                             //printf("\n %d %d %s %u \n", file_size[0], file_size[1], file_size, flist->size);
                         }
-                        if (size <= (nlen + slen + 1)) {
-                            size = size + 512;
-                            data = (char *) realloc(data, size * sizeof(char));
-                        }
+//                        if (size <= (nlen + slen + 1)) {
+//                            size = size + 512;
+//                            //data = (char *) realloc(data, size * sizeof(char));
+//                        }
                         copy(bufptr + buff_size, flist->name, &len);
                         buff_size = buff_size + len;
                         *(bufptr + buff_size) = file_size[0];
@@ -97,7 +79,7 @@ void  socketThread(int  clientSocket)
                     }
                     //strcpy(buffer, data);
 
-                    free(data);
+                    //free(data);
                     sleep(1);
                     send(newSocket, buffer, BUFF_SIZE, 0);
                     break;
@@ -117,7 +99,7 @@ void  socketThread(int  clientSocket)
                 case DOWNLOAD:
                     break;
                 case DATA:
-                    loop = 0;
+
                 case CONFIRM:
                     //numBlock = ntohs((unsigned short *)client_message+1);
                     break;
@@ -127,8 +109,7 @@ void  socketThread(int  clientSocket)
                 case ERROR:
                     break;
                 case EXIT:
-
-                    return;
+                    loop = 0;
                     break;
                 default:
                     printf("\nopcode is not exist!!");
@@ -141,12 +122,13 @@ void  socketThread(int  clientSocket)
 
             pthread_mutex_unlock(&lock);
             sleep(2);
-            printf("\n%d\n", buff_size);
+            //printf("\n%d\n", buff_size);
             for (int i = 0; i < BUFF_SIZE; ++i) {
                 printf("%c", buffer[i]);
             }
         }
     }
+    sleep(2);
     printf("Exit socketThread \n");
     close(newSocket);
 }
@@ -184,25 +166,26 @@ int main(){
         /*---- Accept call creates a new socket for the incoming connection ----*/
         addr_size = sizeof serverStorage;
         newSocket = accept(serverSocket, (struct sockaddr *) &serverStorage, &addr_size);
-        int pid_c = 0;
-        if ((pid_c = fork())==0)
-        {
             socketThread(newSocket);
-        }
-        else
-        {
-            pid[i++] = pid_c;
-            if( i >= 49)
-            {
-                i = 0;
-                while(i < 50){
-                    waitpid(pid[i++], NULL, 0);
-                    printf("\nChild %d terminated\n",pid[i]);
-                }
-
-                i = 0;
-            }
-        }
+//        int pid_c = 0;
+//        if ((pid_c = fork())==0)
+//        {
+//            socketThread(newSocket);
+//        }
+//        else
+//        {
+//            pid[i++] = pid_c;
+//            if( i >= 49)
+//            {
+//                i = 0;
+//                while(i < 50){
+//                    waitpid(pid[i++], NULL, 0);
+//                    printf("\nChild %d terminated\n",pid[i]);
+//                }
+//
+//                i = 0;
+//            }
+//        }
     }
     return 0;
 }

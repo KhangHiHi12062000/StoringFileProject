@@ -30,7 +30,3 @@
 #define DATA_SIZE 1024
 #define LIMIT 50
 #define PORT 8080
-
-
-void sigchld_handler();
-void AddSigAction();

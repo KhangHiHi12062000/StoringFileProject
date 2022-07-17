@@ -44,7 +44,6 @@ int main(){
         bufptr = buff;
         memset(buff,0,BUFF_SIZE);
         printf("\nInsert string to send:");
-        memset(buff,'\0',(strlen(buff)+1));
         //fgets(buff, BUFF_SIZE, stdin);
         scanf("%s",buff);
         msg_len = strlen(buff);
@@ -74,9 +73,7 @@ int main(){
         printf("\n%d", bufptr[1]);
         //bufptr = eatByte(bufptr,&number);
         number = ntohs(*(unsigned short *)bufptr);
-        bufptr += 2;
         printf("\n%u",number);
-        continue;
 
     }
 

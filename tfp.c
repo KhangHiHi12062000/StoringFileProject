@@ -104,7 +104,7 @@ int upload_mess(int sock, char *buff, char *filename,char *cdirectory, unsigned 
             if(n == -1){
                 continue;
             }
-            if(buff[0] != '5') continue;
+            if(buff[0] != DATA) continue;
             if(ntohs(*((unsigned short*)(buff+1)))==packNum) break;
         }
         if(i==5) break;
