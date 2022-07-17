@@ -23,17 +23,15 @@ pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 void  socketThread(int  clientSocket)
 {
 char client_message[BUFF_SIZE];
-char *cliptr,*bufptr,*tmpptr;
+char *cliptr,*bufptr;
 cliptr = client_message;
 char buffer[BUFF_SIZE];
 int buff_size;
-char tmp[BUFF_SIZE];
-tmpptr = tmp;
 bufptr = buffer;
 //char *opcode;
 char cdirectory[255];
 //char username[255];
-unsigned short numBlock;
+//unsigned short numBlock;
 int newSocket = clientSocket;
 recv(newSocket , client_message , BUFF_SIZE , 0);
 
@@ -45,6 +43,7 @@ pthread_mutex_lock(&lock);
     char *opcode = malloc(sizeof(char)*10);
     char *username = malloc(sizeof(char)*BUFF_SIZE);
     //char *cdirectory = malloc(sizeof(char)*BUFF_SIZE);
+    char *filename = malloc(BUFF_SIZE*sizeof(char));
     *opcode = client_message[0];
     switch (*opcode) {
         case CREATE_FOLDER:
@@ -53,12 +52,15 @@ pthread_mutex_lock(&lock);
             strcat(cdirectory,"/");
             strcat(cdirectory,username);
             strcpy(buffer,"Create folder success!!");
+            sleep(1);
+            create_Folder(cdirectory);
+            send(newSocket,buffer,BUFF_SIZE,0);
             break;
         case LIST_DIR:
             cliptr = eatString(cliptr+1, username);
-//            strcpy(cdirectory,SERVER_ROOT);
-//            strcat(cdirectory,"/");
-//            strcat(cdirectory,username);
+            strcpy(cdirectory,SERVER_ROOT);
+            strcat(cdirectory,"/");
+            strcat(cdirectory,username);
             buffer[0] = '2';
             buff_size += 1;
             File *list=listFiles(cdirectory);
@@ -85,8 +87,6 @@ pthread_mutex_lock(&lock);
                     size=size+512;
                     data=(char*)realloc(data, size*sizeof(char));
                 }
-                //2name\0kjname2\0mn...
-                //tmpptr = strcat(tmpptr, flist->name);
                 copy(bufptr+buff_size,flist->name,&len);
                 buff_size = buff_size + len;
                 *(bufptr+buff_size) = flist->name[0];
@@ -98,21 +98,32 @@ pthread_mutex_lock(&lock);
             //strcpy(buffer, data);
 
             free(data);
+            sleep(1);
+            send(newSocket,buffer,BUFF_SIZE,0);
             break;
         case RES_LIST_DIR:
             break;
         case UPLOAD:
             //buff = eatString(buff+1, filename);
+            printf("Upload request\n");
+            unsigned short numBlock;
+            cliptr = eatString(cliptr+1,filename);
+            cliptr = eatByte(cliptr,&numBlock);
+
+            strcpy(buffer,"Start receivce file");
+            send(newSocket,buffer,BUFF_SIZE,0);
+
             break;
         case DOWNLOAD:
             break;
         case DATA:
+
             break;
         case CONFIRM:
-            //buff = eatByte(buff+1, numBlock);
+            //numBlock = ntohs((unsigned short *)client_message+1);
             break;
         case DELETE:
-            //buff = eatString(buff+1, filename);
+
             break;
         case ERROR:
             break;
@@ -125,21 +136,23 @@ pthread_mutex_lock(&lock);
     free(opcode);
     free(username);
     //free(cdirectory);
+    free(filename);
 
 pthread_mutex_unlock(&lock);
-sleep(5);
-    switch (client_message[0]) {
-        case CREATE_FOLDER:
-            create_Folder(cdirectory);
-            break;
-        default:
-            break;
-    };
+sleep(2);
+//    switch (client_message[0]) {
+//        case CREATE_FOLDER:
+//            //create_Folder(cdirectory);
+//            break;
+//        default:
+//            break;
+//    };
+
     printf("%d\n",buff_size);
     for (int i = 0; i < buff_size; ++i) {
         printf("%c", buffer[i]);
     }
-send(newSocket,buffer,BUFF_SIZE,0);
+
 printf("Exit socketThread \n");
 close(newSocket);
 }

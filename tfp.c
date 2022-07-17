@@ -1,45 +1,8 @@
 #include "tfp.h"
 
-int GetRequestData(char *buff, char *opcode, char *filename, char *username, unsigned short *numBlock){
-    *opcode=buff[0];
-
-    switch (*opcode) {
-        case CREATE_FOLDER:
-            buff = eatString(buff+1, username);
-            printf("\n username : %s", username);
-            break;
-        case LIST_DIR:
-            buff = eatString(buff+1, username);
-            break;
-        case RES_LIST_DIR:
-            break;
-        case UPLOAD:
-            buff = eatString(buff+1, filename);
-            break;
-        case DOWNLOAD:
-            break;
-        case DATA:
-            break;
-        case CONFIRM:
-            buff = eatByte(buff+1, numBlock);
-            break;
-        case DELETE:
-            buff = eatString(buff+1, filename);
-            break;
-        case ERROR:
-            break;
-        case EXIT:
-            break;
-        default:
-            printf("\nopcode is not exist!!");
-            return 1;
-    }
-    return 0;
-}
-
 char *eatString(char *buff, char *str){
     int i = 0;
-    while(buff[i] != '\0' && buff[i] != '|'){
+    while(buff[i] != '\0'){
         str[i] = buff[i];
         i++;
     }
@@ -102,21 +65,69 @@ void create_Folder(char *path){
     }
 }
 
+int comfirmMess(int sock, char *buff, int size, unsigned short numblock){
+
+    buff[0] = '6';
+    writeBytes(buff+1,numblock);
+
+    send(sock,buff, size,0);
+    return 0;
+}
+int upload_mess(int sock, char *buff, char *filename,char *cdirectory, unsigned short numblock){
+    strcpy(buff, cdirectory);
+    strcat(buff, "/");
+    strcat(buff, filename);
+
+    FILE *file=fopen(buff, "r");
+
+    if(file!=NULL){
+        send(sock,"File already exist.",50,0);
+        return 1;
+    }
+
+    file=fopen(buff, "w+b");
+    if(file==NULL){
+        send(sock, "Write file error.", 50,0);
+        return 1;
+    }
+
+    int n;
+    int ok=0;
+    int packNum=0;
+
+    comfirmMess(sock, buff, 0, packNum);
+    ++packNum;
+
+    int next = 1;
+    while (next){
+        int i;
+        for(i=0 ; i<5 ; ++i){
+            n = recv(sock, buff, BUFF_SIZE, 0);
+            if(n == -1){
+                continue;
+            }
+            if(buff[0] != '5') continue;
+            if(ntohs(*((unsigned short*)(buff+1)))==packNum) break;
+        }
+        if(i==5) break;
+
+        int stat=fwrite(buff+3, 1, n-3, file);
+        if(stat!=(n-3)){
+            send(sock, "Error on write in file.", 50, 0);
+            break;
+        }
+        if(n<BUFF_SIZE){
+            ok=1;
+            break;
+        }
+        ++packNum;
+    }
+    fclose(file);
+
+    if(!ok) removeFile(cdirectory, filename);
+    return 0;
+}
 //void main(){
-//    char path[500]={'a','b','c'};
-//    char *ptr;
-//    ptr = path;
-//    int p=4;
-//    char src1[500]="adfhkhjfdak";
-//    char src2[500]="243897298347";
-//    int size;
-//    copy(ptr+4 ,src1,&size);
-//    p = p + size;
-//    copy(ptr + p,src2,&size);
-//
-//    p = p + size;
-//    for (int i = 0; i < 34; ++i) {
-//        printf("%c",path[i]);
-//    }
-//    printf("%d",p);
+//    unsigned short x = 5.123;
+//    printf("%u",x);
 //}

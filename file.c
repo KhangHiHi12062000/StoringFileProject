@@ -2,6 +2,7 @@
 // Created by khangnt-leo on 30/06/2022.
 //
 #include "file.h"
+#include "server.h";
 
 
 void addToStack(File **root, char *name, char isDir, char isExec, unsigned long size){
@@ -98,5 +99,31 @@ void sizeToH(unsigned long size, char *buff, size_t max_len){
 }
 void createNewFolder(char *path){
     //mkdir(path,  S_IRWXU | S_IRWXG | S_IRWXO);
-    int result = mkdir(path, 0777);
+    //int result = mkdir(path, 0777);
+    errno = 0;
+    int ret = mkdir(path, S_IRWXU | S_IRWXG | S_IRWXO);
+    if (ret == -1) {
+        switch (errno) {
+            case EACCES :
+                printf("the parent directory does not allow write");
+                exit(EXIT_FAILURE);
+            case EEXIST:
+                printf("pathname already exists");
+                exit(EXIT_FAILURE);
+            case ENAMETOOLONG:
+                printf("pathname is too long");
+                exit(EXIT_FAILURE);
+            default:
+                perror("mkdir");
+                exit(EXIT_FAILURE);
+        }
+    }
+}
+void removeFile(char* cdir, char *filename){
+    char tmp[256];
+    strcpy(tmp, cdir);
+    strcat(tmp, "/");
+    strcat(tmp, filename);
+
+    int ret=remove(tmp);
 }

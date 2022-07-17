@@ -58,6 +58,9 @@ int main(){
 
         buff[bytes_received] = '\0';
         printf("Reply from server: %s", buff);
+        for (int i = 0; i < 1024; ++i) {
+            printf("%c",buff[i]);
+        }
         continue;
     }
 
