@@ -34,7 +34,6 @@ char cdirectory[255];
 //unsigned short numBlock;
 int newSocket = clientSocket;
 recv(newSocket , client_message , BUFF_SIZE , 0);
-
 //reset 1 buffer
     memset(buffer,0,BUFF_SIZE);
     buff_size=0;
@@ -51,10 +50,8 @@ pthread_mutex_lock(&lock);
             strcpy(cdirectory,SERVER_ROOT);
             strcat(cdirectory,"/");
             strcat(cdirectory,username);
-            strcpy(buffer,"Create folder success!!");
             sleep(1);
             create_Folder(cdirectory);
-            send(newSocket,buffer,BUFF_SIZE,0);
             break;
         case LIST_DIR:
             cliptr = eatString(cliptr+1, username);
@@ -80,8 +77,9 @@ pthread_mutex_lock(&lock);
                 }else{
 //                    sizeToH(flist->size, file_size, 16);
 //                    slen=strlen(file_size);
-                    *((short *)file_size) = htons(flist->size);
+                    *((unsigned short *)file_size) = htons(flist->size);
                     slen = strlen(file_size);
+                    printf("\n %d %d %s %u \n",file_size[0],file_size[1],file_size, flist->size);
                 }
                 if(size<=(nlen+slen+1)){
                     size=size+512;
@@ -89,8 +87,8 @@ pthread_mutex_lock(&lock);
                 }
                 copy(bufptr+buff_size,flist->name,&len);
                 buff_size = buff_size + len;
-                *(bufptr+buff_size) = flist->name[0];
-                *(bufptr+buff_size+1) = flist->name[1];
+                *(bufptr+buff_size) = file_size[0];
+                *(bufptr+buff_size+1) = file_size[1];
                 buff_size += 2;
                 printf("%s\n",flist->name);
                 flist = flist->next;
@@ -108,11 +106,10 @@ pthread_mutex_lock(&lock);
             printf("Upload request\n");
             unsigned short numBlock;
             cliptr = eatString(cliptr+1,filename);
-            cliptr = eatByte(cliptr,&numBlock);
-
-            strcpy(buffer,"Start receivce file");
-            send(newSocket,buffer,BUFF_SIZE,0);
-
+            //cliptr = eatByte(cliptr,&numBlock);
+            numBlock = ntohs(*(unsigned short *)cliptr);
+            cliptr += 2;
+            upload_mess(newSocket, buffer, filename, cdirectory, numBlock);
             break;
         case DOWNLOAD:
             break;

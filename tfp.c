@@ -11,15 +11,13 @@ char *eatString(char *buff, char *str){
 }
 
 char *eatByte(char *buff, unsigned short *numBlock){
-    unsigned short hi;
-    unsigned short lo;
+    int hi;
+    int lo;
 
     hi = buff[0];
     lo = buff[1];
-    *numBlock = ((hi<<8)|lo);
-    printf("%u\n",hi);
-    printf("%u\n",lo);
-    printf("%u\n",*numBlock);
+    //*numBlock = ((hi<<8)|lo);
+    *numBlock = hi * 2^8 + lo;
     return buff+2;
 }
 

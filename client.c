@@ -8,7 +8,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <string.h>
-
+#include "tfp.h"
 #define SERVER_ADDR "127.0.0.1"
 #define SERVER_PORT 8080
 #define BUFF_SIZE 512
@@ -16,6 +16,8 @@
 int main(){
     int client_sock;
     char buff[BUFF_SIZE + 1];
+    char *bufptr;
+    bufptr = buff;
     struct sockaddr_in server_addr; /* server's address information */
     int msg_len, bytes_sent, bytes_received;
 
@@ -53,15 +55,26 @@ int main(){
         if (bytes_received < 0)
             perror("\nError: ");
         else if (bytes_received == 0)
-            printf("%s",buff);
+            //printf("%s",buff);
             printf("Connection closed.\n");
 
         buff[bytes_received] = '\0';
         printf("Reply from server: %s", buff);
-        for (int i = 0; i < 1024; ++i) {
-            printf("%c",buff[i]);
+        for (int i = 0; i < 100; ++i) {
+            printf("%c\n",buff[i]);
         }
+        char name[512];
+        unsigned short number;
+        bufptr = eatString(bufptr+1,name);
+        printf("\n%s", name);
+        printf("\n%d", bufptr[0]);
+        printf("\n%d", bufptr[1]);
+        //bufptr = eatByte(bufptr,&number);
+        number = ntohs(*(unsigned short *)bufptr);
+        bufptr += 2;
+        printf("\n%u",number);
         continue;
+
     }
 
     //Step 4: Close socket

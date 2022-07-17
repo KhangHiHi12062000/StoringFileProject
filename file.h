@@ -17,7 +17,7 @@ struct File{
     char name[NAMELEN];
     char isDir;
     char isExec;
-    unsigned long size;
+    unsigned short size;
     File *next;
 };
 
