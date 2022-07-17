@@ -125,7 +125,13 @@ int upload_mess(int sock, char *buff, char *filename,char *cdirectory, unsigned 
     if(!ok) removeFile(cdirectory, filename);
     return 0;
 }
+//char *a(char *bu){
+//    return bu+2;
+//}
 //void main(){
-//    unsigned short x = 5.123;
-//    printf("%u",x);
+//    char bu[5000]= "asdfjkhaslnfdnms";
+//    char *p;
+//    p = bu;
+//    p = a(p);
+//    printf("%s",p);
 //}
