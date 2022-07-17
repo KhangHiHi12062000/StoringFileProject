@@ -15,9 +15,8 @@
 
 int main(){
     int client_sock;
-    char buff[BUFF_SIZE + 1];
-    char *bufptr;
-    bufptr = buff;
+
+
     struct sockaddr_in server_addr; /* server's address information */
     int msg_len, bytes_sent, bytes_received;
 
@@ -40,6 +39,10 @@ int main(){
     //send message
 
     while(1){
+        char buff[BUFF_SIZE + 1];
+        char *bufptr;
+        bufptr = buff;
+        memset(buff,0,BUFF_SIZE);
         printf("\nInsert string to send:");
         memset(buff,'\0',(strlen(buff)+1));
         //fgets(buff, BUFF_SIZE, stdin);
@@ -59,9 +62,9 @@ int main(){
             printf("Connection closed.\n");
 
         buff[bytes_received] = '\0';
-        printf("Reply from server: %s", buff);
+        printf("Reply from server:");
         for (int i = 0; i < 100; ++i) {
-            printf("%c\n",buff[i]);
+            printf("%c",buff[i]);
         }
         char name[512];
         unsigned short number;

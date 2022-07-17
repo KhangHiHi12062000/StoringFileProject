@@ -24,132 +24,131 @@ void  socketThread(int  clientSocket)
 {   char cdirectory[255];
     char client_message[BUFF_SIZE];
     char *cliptr, *bufptr;
-    char buffer[BUFF_SIZE];
     int buff_size;
     int newSocket = clientSocket;
-    //while(1) {
-        bufptr = buffer;
+    int loop = 1;
+    while(loop) {
+
         cliptr = client_message;
-        recv(newSocket, client_message, BUFF_SIZE, 0);
-    //reset 1 buffer
-        memset(buffer, 0, BUFF_SIZE);
-        buff_size = 0;
-        //Send message to the client socket
-        pthread_mutex_lock(&lock);
-        char *opcode = malloc(sizeof(char) * 10);
-        char *username = malloc(sizeof(char) * BUFF_SIZE);
-        //char *cdirectory = malloc(sizeof(char)*BUFF_SIZE);
-        char *filename = malloc(BUFF_SIZE * sizeof(char));
-        *opcode = client_message[0];
-        switch (*opcode) {
-            case CREATE_FOLDER:
-                cliptr = eatString(cliptr + 1, username);
-                strcpy(cdirectory, SERVER_ROOT);
-                strcat(cdirectory, "/");
-                strcat(cdirectory, username);
-                sleep(1);
-                create_Folder(cdirectory);
-                break;
-            case LIST_DIR:
-                cliptr = eatString(cliptr + 1, username);
-                strcpy(cdirectory, SERVER_ROOT);
-                strcat(cdirectory, "/");
-                strcat(cdirectory, username);
-                buffer[0] = '2';
-                buff_size += 1;
-                File *list = listFiles(cdirectory);
-                File *flist = list;
-                char *data = (char *) malloc(BUFF_SIZE * sizeof(char));
-                data[0] = 0;
+        if(recv(newSocket, client_message, BUFF_SIZE, 0)>0) {
+            //reset 1 buffer
 
-                while (flist != NULL) {
-                    int nlen = strlen(flist->name);
-                    int slen;
-                    int size;
-                    int len = 0;
-                    char file_size[16];
-                    if (flist->isDir) {
-                        strcpy(file_size, "DIR");
-                        slen = strlen(file_size);
-                    } else {
-    //                    sizeToH(flist->size, file_size, 16);
-    //                    slen=strlen(file_size);
-                        *((unsigned short *) file_size) = htons(flist->size);
-                        slen = strlen(file_size);
-                        printf("\n %d %d %s %u \n", file_size[0], file_size[1], file_size, flist->size);
+            char buffer[BUFF_SIZE];
+            bufptr = buffer;
+            buff_size = 0;
+            memset(buffer, 0, BUFF_SIZE);
+
+            //Send message to the client socket
+            pthread_mutex_lock(&lock);
+            char *opcode = malloc(sizeof(char) * 10);
+            char *username = malloc(sizeof(char) * BUFF_SIZE);
+            //char *cdirectory = malloc(sizeof(char)*BUFF_SIZE);
+            char *filename = malloc(BUFF_SIZE * sizeof(char));
+            *opcode = client_message[0];
+            switch (*opcode) {
+                case CREATE_FOLDER:
+                    cliptr = eatString(cliptr + 1, username);
+                    strcpy(cdirectory, SERVER_ROOT);
+                    strcat(cdirectory, "/");
+                    strcat(cdirectory, username);
+                    sleep(1);
+                    create_Folder(cdirectory);
+                    send(newSocket, "asdf", 10, 0);
+                    break;
+                case LIST_DIR:
+                    cliptr = eatString(cliptr + 1, username);
+//                    strcpy(cdirectory, SERVER_ROOT);
+//                    strcat(cdirectory, "/");
+//                    strcat(cdirectory, username);
+                    buffer[0] = '2';
+                    buff_size += 1;
+                    File *list = listFiles(cdirectory);
+                    File *flist = list;
+                    char *data = (char *) malloc(BUFF_SIZE * sizeof(char));
+                    data[0] = 0;
+
+                    while (flist != NULL) {
+                        int nlen = strlen(flist->name);
+                        int slen;
+                        int size;
+                        int len = 0;
+                        char file_size[16];
+                        if (flist->isDir) {
+                            strcpy(file_size, "DIR");
+                            slen = strlen(file_size);
+                        } else {
+                            //                    sizeToH(flist->size, file_size, 16);
+                            //                    slen=strlen(file_size);
+                            *((unsigned short *) file_size) = htons(flist->size);
+                            slen = strlen(file_size);
+                            //printf("\n %d %d %s %u \n", file_size[0], file_size[1], file_size, flist->size);
+                        }
+                        if (size <= (nlen + slen + 1)) {
+                            size = size + 512;
+                            data = (char *) realloc(data, size * sizeof(char));
+                        }
+                        copy(bufptr + buff_size, flist->name, &len);
+                        buff_size = buff_size + len;
+                        *(bufptr + buff_size) = file_size[0];
+                        *(bufptr + buff_size + 1) = file_size[1];
+                        buff_size += 2;
+                        //printf("%s\n", flist->name);
+                        flist = flist->next;
                     }
-                    if (size <= (nlen + slen + 1)) {
-                        size = size + 512;
-                        data = (char *) realloc(data, size * sizeof(char));
-                    }
-                    copy(bufptr + buff_size, flist->name, &len);
-                    buff_size = buff_size + len;
-                    *(bufptr + buff_size) = file_size[0];
-                    *(bufptr + buff_size + 1) = file_size[1];
-                    buff_size += 2;
-                    printf("%s\n", flist->name);
-                    flist = flist->next;
-                }
-                //strcpy(buffer, data);
+                    //strcpy(buffer, data);
 
-                free(data);
-                sleep(1);
-                send(newSocket, buffer, BUFF_SIZE, 0);
-                break;
-            case RES_LIST_DIR:
-                break;
-            case UPLOAD:
-                //buff = eatString(buff+1, filename);
-                printf("Upload request\n");
-                unsigned short numBlock;
-                cliptr = eatString(cliptr + 1, filename);
-                //cliptr = eatByte(cliptr,&numBlock);
-                numBlock = ntohs(*(unsigned short *) cliptr);
-                cliptr += 2;
-                upload_mess(newSocket, buffer, filename, cdirectory, numBlock);
-                break;
-            case DOWNLOAD:
-                break;
-            case DATA:
+                    free(data);
+                    sleep(1);
+                    send(newSocket, buffer, BUFF_SIZE, 0);
+                    break;
+                case RES_LIST_DIR:
 
-                break;
-            case CONFIRM:
-                //numBlock = ntohs((unsigned short *)client_message+1);
-                break;
-            case DELETE:
+                    break;
+                case UPLOAD:
+                    //buff = eatString(buff+1, filename);
+                    printf("Upload request\n");
+                    unsigned short numBlock;
+                    cliptr = eatString(cliptr + 1, filename);
+                    //cliptr = eatByte(cliptr,&numBlock);
+                    numBlock = ntohs(*(unsigned short *) cliptr);
+                    cliptr += 2;
+                    upload_mess(newSocket, buffer, filename, cdirectory, numBlock);
+                    break;
+                case DOWNLOAD:
+                    break;
+                case DATA:
+                    loop = 0;
+                case CONFIRM:
+                    //numBlock = ntohs((unsigned short *)client_message+1);
+                    break;
+                case DELETE:
 
-                break;
-            case ERROR:
-                break;
-            case EXIT:
-                printf("Exit socketThread \n");
-                close(newSocket);
-                return;
-                break;
-            default:
-                printf("\nopcode is not exist!!");
-                break;
+                    break;
+                case ERROR:
+                    break;
+                case EXIT:
+
+                    return;
+                    break;
+                default:
+                    printf("\nopcode is not exist!!");
+                    break;
+            }
+            free(opcode);
+            free(username);
+            //free(cdirectory);
+            free(filename);
+
+            pthread_mutex_unlock(&lock);
+            sleep(2);
+            printf("\n%d\n", buff_size);
+            for (int i = 0; i < BUFF_SIZE; ++i) {
+                printf("%c", buffer[i]);
+            }
         }
-        free(opcode);
-        free(username);
-        //free(cdirectory);
-        free(filename);
-
-        pthread_mutex_unlock(&lock);
-        sleep(2);
-    //    switch (client_message[0]) {
-    //        case CREATE_FOLDER:
-    //            //create_Folder(cdirectory);
-    //            break;
-    //        default:
-    //            break;
-    //    };
-
-        printf("%d\n", buff_size);
-        for (int i = 0; i < buff_size; ++i) {
-            printf("%c", buffer[i]);
-        }
-    //}
+    }
+    printf("Exit socketThread \n");
+    close(newSocket);
 }
 
 int main(){
