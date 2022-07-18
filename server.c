@@ -4,51 +4,63 @@ pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 void  socketThread(int  clientSocket)
 {   char cdirectory[255];
     char client_message[BUFF_SIZE];
+
     char *cliptr, *bufptr;
     int buff_size;
     int newSocket = clientSocket;
     int loop = 1;
     while(loop) {
-        if(recv(newSocket, client_message, BUFF_SIZE, 0)>0) {
+        if(recv(newSocket, client_message, BUFF_SIZE, 0)>0){
+//
+            printf("\n%s\n", client_message);
+
             //reset 1 buffer
+            char buffer[BUFF_SIZE];
             //printf("%s",client_message);
             cliptr = client_message;
-            char buffer[BUFF_SIZE];
             bufptr = buffer;
             buff_size = 0;
-            memset(buffer, 0, BUFF_SIZE);
-
+            memset(buffer, '\0', BUFF_SIZE);
             //Send message to the client socket
             pthread_mutex_lock(&lock);
             char *opcode = malloc(sizeof(char) * 10);
             char *username = malloc(sizeof(char) * BUFF_SIZE);
-            //char *cdirectory = malloc(sizeof(char)*BUFF_SIZE);
             char *filename = malloc(BUFF_SIZE * sizeof(char));
-            memset(username,0,BUFF_SIZE);
-            memset(filename,0,BUFF_SIZE);
+            memset(username, 0, BUFF_SIZE);
+            memset(filename, 0, BUFF_SIZE);
             *opcode = client_message[0];
             switch (*opcode) {
-                case CREATE_FOLDER:
+                case CREATE_FOLDER: {
                     cliptr = eatString(cliptr + 1, username);
                     strcpy(cdirectory, SERVER_ROOT);
                     strcat(cdirectory, "/");
                     strcat(cdirectory, username);
                     sleep(1);
                     create_Folder(cdirectory);
-                    send(newSocket, "0", 10, 0);
+                    //buffer="ok";
+                    strcpy(buffer, "ok!");
+                    buff_size+=4;
+                    send(newSocket, buffer, buff_size, 0);
                     break;
-                case LIST_DIR:
-                    cliptr = eatString(cliptr + 1, username);
+                }
+                case LIST_DIR: {
+                    //cliptr = eatString(cliptr + 1, username);
 //                    strcpy(cdirectory, SERVER_ROOT);
 //                    strcat(cdirectory, "/");
 //                    strcat(cdirectory, username);
-                    buffer[0] = '2';
+                    unsigned short numFile = 0;
+                    char folder_size[16];
+                    bufptr[0] = '2';
                     buff_size += 1;
-                    File *list = listFiles(cdirectory);
+                    File *list = listFiles(cdirectory,&numFile);
                     File *flist = list;
                     //char *data = (char *) malloc(BUFF_SIZE * sizeof(char));
                     //data[0] = 0;
-
+                    printf("folder size %u\n",numFile);
+                    *((unsigned short *) folder_size) = htons(numFile);
+                    *(bufptr+buff_size) = folder_size[0];
+                    *(bufptr+buff_size+1) = folder_size[1];
+                    buff_size += 2;
                     while (flist != NULL) {
                         int nlen = strlen(flist->name);
                         int slen;
@@ -77,18 +89,23 @@ void  socketThread(int  clientSocket)
                         //printf("%s\n", flist->name);
                         flist = flist->next;
                     }
-                    //strcpy(buffer, data);
 
+                    //strcpy(buffer, data);
+                    //copyfull(buffer, buffer, buff_size);
+                    for (int i = 0; i < 100; ++i) {
+                        printf("%c", buffer[i]);
+                    }
+                    printf("\n%d\n", buff_size);
                     //free(data);
                     sleep(1);
-                    send(newSocket, buffer, BUFF_SIZE, 0);
+                    send(newSocket, buffer, buff_size, 0);
                     break;
+                }
                 case RES_LIST_DIR:
 
                     break;
-                case UPLOAD:
-                    //buff = eatString(buff+1, filename);
-                    printf("Upload request\n");
+                case UPLOAD: {
+
                     unsigned short numBlock;
                     cliptr = eatString(cliptr + 1, filename);
                     //cliptr = eatByte(cliptr,&numBlock);
@@ -96,10 +113,12 @@ void  socketThread(int  clientSocket)
                     cliptr += 2;
                     upload_mess(newSocket, buffer, filename, cdirectory, numBlock);
                     break;
+                }
                 case DOWNLOAD:
+
                     break;
                 case DATA:
-
+                    break;
                 case CONFIRM:
                     //numBlock = ntohs((unsigned short *)client_message+1);
                     break;
@@ -115,6 +134,9 @@ void  socketThread(int  clientSocket)
                     printf("\nopcode is not exist!!");
                     break;
             }
+//            for (int i = 0; i < 100 ;++i) {
+//                printf("%c", buffer[i]);
+//            }
             free(opcode);
             free(username);
             //free(cdirectory);
@@ -122,10 +144,7 @@ void  socketThread(int  clientSocket)
 
             pthread_mutex_unlock(&lock);
             sleep(2);
-            //printf("\n%d\n", buff_size);
-            for (int i = 0; i < BUFF_SIZE; ++i) {
-                printf("%c", buffer[i]);
-            }
+
         }
     }
     sleep(2);
@@ -166,26 +185,26 @@ int main(){
         /*---- Accept call creates a new socket for the incoming connection ----*/
         addr_size = sizeof serverStorage;
         newSocket = accept(serverSocket, (struct sockaddr *) &serverStorage, &addr_size);
+            //socketThread(newSocket);
+        int pid_c = 0;
+        if ((pid_c = fork())==0)
+        {
             socketThread(newSocket);
-//        int pid_c = 0;
-//        if ((pid_c = fork())==0)
-//        {
-//            socketThread(newSocket);
-//        }
-//        else
-//        {
-//            pid[i++] = pid_c;
-//            if( i >= 49)
-//            {
-//                i = 0;
-//                while(i < 50){
-//                    waitpid(pid[i++], NULL, 0);
-//                    printf("\nChild %d terminated\n",pid[i]);
-//                }
-//
-//                i = 0;
-//            }
-//        }
+        }
+        else
+        {
+            pid[i++] = pid_c;
+            if( i >= 49)
+            {
+                i = 0;
+                while(i < 50){
+                    waitpid(pid[i++], NULL, 0);
+                    printf("\nChild %d terminated\n",pid[i]);
+                }
+
+                i = 0;
+            }
+        }
     }
     return 0;
 }

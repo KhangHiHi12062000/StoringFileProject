@@ -23,7 +23,7 @@ struct File{
 
 
 void addToStack(File **root, char *name, char isDir, char isExec, unsigned long size);
-File* listFiles(char *path);
+File* listFiles(char *path, unsigned short *numFile);
 int isExecutable(char *path);
 int isDir(char *path);
 int dirExist(char *dir);

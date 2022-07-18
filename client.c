@@ -11,7 +11,7 @@
 #include "tfp.h"
 #define SERVER_ADDR "127.0.0.1"
 #define SERVER_PORT 8080
-#define BUFF_SIZE 512
+#define BUFF_SIZE 1027
 
 int main(){
     int client_sock;
@@ -41,8 +41,9 @@ int main(){
     while(1){
         char buff[BUFF_SIZE + 1];
         char *bufptr;
-        bufptr = buff;
+
         memset(buff,0,BUFF_SIZE);
+        bufptr = buff;
         printf("\nInsert string to send:");
         //fgets(buff, BUFF_SIZE, stdin);
         scanf("%s",buff);
@@ -68,12 +69,12 @@ int main(){
         char name[512];
         unsigned short number;
         bufptr = eatString(bufptr+1,name);
-        printf("\n%s", name);
-        printf("\n%d", bufptr[0]);
-        printf("\n%d", bufptr[1]);
+        printf("\n name %s", name);
+        printf("\nSo 1 %d", bufptr[0]);
+        printf("\nSo 2 %d", bufptr[1]);
         //bufptr = eatByte(bufptr,&number);
         number = ntohs(*(unsigned short *)bufptr);
-        printf("\n%u",number);
+        printf("\nnumber %u",number);
 
     }
 

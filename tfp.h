@@ -29,6 +29,7 @@ char *writeBytes(char *buff, unsigned short *numBlock);
 char *writeBytel(char *buff, unsigned long *numBlock);
 void create_Folder(char *path);
 int copy(char *dest, char *src, int *size);
+int copyfull(char *dest,char *src, int size);
 int comfirmMess(int sock, char *buff, int size, unsigned short numblock);
 int upload_mess(int sock, char *buff, char *filename,char *cdirectory , unsigned short numblock);
 

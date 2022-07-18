@@ -79,13 +79,13 @@ int upload_mess(int sock, char *buff, char *filename,char *cdirectory, unsigned 
     FILE *file=fopen(buff, "r");
 
     if(file!=NULL){
-        send(sock,"File already exist.",50,0);
+        //send(sock,"File already exist.",50,0);
         return 1;
     }
 
     file=fopen(buff, "w+b");
     if(file==NULL){
-        send(sock, "Write file error.", 50,0);
+        //send(sock, "Write file error.", 50,0);
         return 1;
     }
 
@@ -111,7 +111,7 @@ int upload_mess(int sock, char *buff, char *filename,char *cdirectory, unsigned 
 
         int stat=fwrite(buff+3, 1, n-3, file);
         if(stat!=(n-3)){
-            send(sock, "Error on write in file.", 50, 0);
+            //send(sock, "Error on write in file.", 50, 0);
             break;
         }
         if(n<BUFF_SIZE){
@@ -123,6 +123,12 @@ int upload_mess(int sock, char *buff, char *filename,char *cdirectory, unsigned 
     fclose(file);
 
     if(!ok) removeFile(cdirectory, filename);
+    return 0;
+}
+int copyfull(char *dest,char *src, int size){
+    for (int i = 0; i < size; ++i) {
+        dest[i] = src[i];
+    }
     return 0;
 }
 //char *a(char *bu){

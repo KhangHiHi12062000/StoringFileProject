@@ -15,7 +15,7 @@ void addToStack(File **root, char *name, char isDir, char isExec, unsigned long 
     *root=f;
 }
 
-File* listFiles(char *path){
+File* listFiles(char *path, unsigned short *numFile){
     DIR *dir=opendir(path);
 
     if(dir==NULL) return NULL;
@@ -23,13 +23,13 @@ File* listFiles(char *path){
     File *stack=NULL;
     struct dirent *ent;
     char fullPath[NAMELEN];
-
     while((ent=readdir(dir))!=NULL){
         if(ent->d_name[0]=='.') continue;
         snprintf(fullPath, NAMELEN-1, "%s/%s", path, ent->d_name);
 
         if(isDir(fullPath)) addToStack(&stack, ent->d_name, 1, 0, 0);
         else addToStack(&stack, ent->d_name, 0,isExecutable(fullPath) , fileSize(fullPath));
+        *numFile += 1;
     }
 
     closedir(dir);
