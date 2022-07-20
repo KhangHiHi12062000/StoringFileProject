@@ -29,4 +29,4 @@
 #define BUFF_SIZE 1+2+DATA_SIZE
 #define DATA_SIZE 1024
 #define LIMIT 50
-#define PORT 8080
+#define PORT 8888

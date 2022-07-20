@@ -35,7 +35,7 @@ void  socketThread(int  clientSocket)
                     strcpy(cdirectory, SERVER_ROOT);
                     strcat(cdirectory, "/");
                     strcat(cdirectory, username);
-                    sleep(1);
+                    sleep(0.2);
                     create_Folder(cdirectory);
                     //buffer="ok";
                     strcpy(buffer, "ok!");
@@ -56,10 +56,10 @@ void  socketThread(int  clientSocket)
                     File *flist = list;
                     //char *data = (char *) malloc(BUFF_SIZE * sizeof(char));
                     //data[0] = 0;
-                    printf("folder size %u\n",numFile);
                     *((unsigned short *) folder_size) = htons(numFile);
                     *(bufptr+buff_size) = folder_size[0];
                     *(bufptr+buff_size+1) = folder_size[1];
+
                     buff_size += 2;
                     while (flist != NULL) {
                         int nlen = strlen(flist->name);
@@ -97,8 +97,11 @@ void  socketThread(int  clientSocket)
                     }
                     printf("\n%d\n", buff_size);
                     //free(data);
-                    sleep(1);
+                    sleep(0.2);
                     send(newSocket, buffer, buff_size, 0);
+                    bufptr = buffer;
+                    numFile = ntohs(*(unsigned short *)(bufptr+1));
+                    printf("folder size %u\n",numFile);
                     break;
                 }
                 case RES_LIST_DIR:
@@ -143,11 +146,11 @@ void  socketThread(int  clientSocket)
             free(filename);
 
             pthread_mutex_unlock(&lock);
-            sleep(2);
+            sleep(0.2);
 
         }
     }
-    sleep(2);
+    sleep(0.2);
     printf("Exit socketThread \n");
     close(newSocket);
 }

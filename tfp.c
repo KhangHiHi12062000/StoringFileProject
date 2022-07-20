@@ -135,9 +135,19 @@ int copyfull(char *dest,char *src, int size){
 //    return bu+2;
 //}
 //void main(){
-//    char bu[5000]= "asdfjkhaslnfdnms";
+//    char bu[16];
+//    memset(bu,0,16);
+//    char bu2[16];
 //    char *p;
-//    p = bu;
-//    p = a(p);
-//    printf("%s",p);
+//    p = bu2;
+//    memset(bu2,0,16);
+//    unsigned short num=300;
+//    *((unsigned short *) bu) = htons(num);
+//    printf("%u\n",bu[0]);
+//    printf("%u\n",bu[1]);
+//    printf("%s\n",bu);
+//    *(p+1)=bu[0];
+//    *(p+2)=bu[1];
+//    num = ntohs(*(unsigned short *)(p+1));
+//    printf("%u\n",num);
 //}

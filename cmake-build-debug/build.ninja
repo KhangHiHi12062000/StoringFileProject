@@ -141,6 +141,18 @@ build CMakeFiles/client2.dir/client.c.o: C_COMPILER__client2_Debug /home/khangnt
   OBJECT_DIR = CMakeFiles/client2.dir
   OBJECT_FILE_DIR = CMakeFiles/client2.dir
 
+build CMakeFiles/client2.dir/tfp.c.o: C_COMPILER__client2_Debug /home/khangnt-leo/CLionProjects/ServerProject/tfp.c || cmake_object_order_depends_target_client2
+  DEP_FILE = CMakeFiles/client2.dir/tfp.c.o.d
+  FLAGS = -g -std=gnu99
+  OBJECT_DIR = CMakeFiles/client2.dir
+  OBJECT_FILE_DIR = CMakeFiles/client2.dir
+
+build CMakeFiles/client2.dir/file.c.o: C_COMPILER__client2_Debug /home/khangnt-leo/CLionProjects/ServerProject/file.c || cmake_object_order_depends_target_client2
+  DEP_FILE = CMakeFiles/client2.dir/file.c.o.d
+  FLAGS = -g -std=gnu99
+  OBJECT_DIR = CMakeFiles/client2.dir
+  OBJECT_FILE_DIR = CMakeFiles/client2.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target client2
@@ -149,7 +161,7 @@ build CMakeFiles/client2.dir/client.c.o: C_COMPILER__client2_Debug /home/khangnt
 #############################################
 # Link the executable client2
 
-build client2: C_EXECUTABLE_LINKER__client2_Debug CMakeFiles/client2.dir/client.c.o
+build client2: C_EXECUTABLE_LINKER__client2_Debug CMakeFiles/client2.dir/client.c.o CMakeFiles/client2.dir/tfp.c.o CMakeFiles/client2.dir/file.c.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/client2.dir
   POST_BUILD = :
@@ -172,6 +184,18 @@ build CMakeFiles/client3.dir/client.c.o: C_COMPILER__client3_Debug /home/khangnt
   OBJECT_DIR = CMakeFiles/client3.dir
   OBJECT_FILE_DIR = CMakeFiles/client3.dir
 
+build CMakeFiles/client3.dir/tfp.c.o: C_COMPILER__client3_Debug /home/khangnt-leo/CLionProjects/ServerProject/tfp.c || cmake_object_order_depends_target_client3
+  DEP_FILE = CMakeFiles/client3.dir/tfp.c.o.d
+  FLAGS = -g -std=gnu99
+  OBJECT_DIR = CMakeFiles/client3.dir
+  OBJECT_FILE_DIR = CMakeFiles/client3.dir
+
+build CMakeFiles/client3.dir/file.c.o: C_COMPILER__client3_Debug /home/khangnt-leo/CLionProjects/ServerProject/file.c || cmake_object_order_depends_target_client3
+  DEP_FILE = CMakeFiles/client3.dir/file.c.o.d
+  FLAGS = -g -std=gnu99
+  OBJECT_DIR = CMakeFiles/client3.dir
+  OBJECT_FILE_DIR = CMakeFiles/client3.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target client3
@@ -180,7 +204,7 @@ build CMakeFiles/client3.dir/client.c.o: C_COMPILER__client3_Debug /home/khangnt
 #############################################
 # Link the executable client3
 
-build client3: C_EXECUTABLE_LINKER__client3_Debug CMakeFiles/client3.dir/client.c.o
+build client3: C_EXECUTABLE_LINKER__client3_Debug CMakeFiles/client3.dir/client.c.o CMakeFiles/client3.dir/tfp.c.o CMakeFiles/client3.dir/file.c.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/client3.dir
   POST_BUILD = :

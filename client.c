@@ -67,14 +67,16 @@ int main(){
             printf("%c",buff[i]);
         }
         char name[512];
-        unsigned short number;
-        bufptr = eatString(bufptr+1,name);
+        unsigned short number,numFile;
+        numFile = ntohs(*(unsigned short *)(bufptr+1));
+        bufptr = eatString(bufptr+3,name);
         printf("\n name %s", name);
         printf("\nSo 1 %d", bufptr[0]);
         printf("\nSo 2 %d", bufptr[1]);
         //bufptr = eatByte(bufptr,&number);
         number = ntohs(*(unsigned short *)bufptr);
         printf("\nnumber %u",number);
+        printf("\nnumFile %u",numFile);
 
     }
 
