@@ -1,23 +1,22 @@
-CC=gcc
-FLAGS=-Wall -Wextra -c
-OBJ=server.o tfp.o file.o
+CFLAGS = -c -Wall
+CC = gcc
+LIBS =  -lm 
 
 all: server
 
-
-server : server.o $(OBJ)
-	$(CC) server.o $(OBJ) -o server
+server: server.o tfp.o file.o
+	${CC} server.o tfp.o file.o -o server
 	
 server.o : server.c
-	$(CC) $(FLAGS) server.c	
+	${CC} ${CFLAGS} server.c
 	
 tfp.o : tfp.c
-	$(CC) $(FLAGS) tfp.c
+	${CC} ${CFLAGS} tfp.c
 	
 file.o : file.c
-	$(CC) $(FLAGS) file.c
-
+	${CC} ${CFLAGS} file.c
 
 clean:
-	rm *.o
-	rm server
+	rm -f *.o *~
+
+

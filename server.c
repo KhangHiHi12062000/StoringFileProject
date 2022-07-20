@@ -130,9 +130,10 @@ void  socketThread(int  clientSocket)
                     break;
                 case ERROR:
                     break;
-                case EXIT:
+                case EXIT: {
                     loop = 0;
                     break;
+                    }
                 default:
                     printf("\nopcode is not exist!!");
                     break;
