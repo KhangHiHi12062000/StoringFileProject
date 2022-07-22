@@ -109,10 +109,13 @@ int upload_mess(int sock, char *buff, char *filename,char *cdirectory, unsigned 
 //                fwrite((buff+3), 1, (n-3), file);
 //            }
 //        }
+//        fwrite(tmp,1, strlen(tmp),file);
         fwrite((buff+3), 1, (n-3), file);
+        sleep(0.2);
+        printf("Done\n");
         ++packNum;
         comfirmMess(sock, buff, 0, packNum);
-        if(packNum>numblock) {
+        if(packNum>=numblock) {
             ok = 1;
             break;
         }

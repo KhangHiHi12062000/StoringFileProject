@@ -64,7 +64,8 @@ void  socketThread(int  clientSocket)
                             strcpy(file_size, "DIR");
                             slen = strlen(file_size);
                         } else {
-                            *((unsigned short *) file_size) = htons(flist->size);
+                            unsigned short numbertmp = (unsigned short)(flist->size/1024);
+                            *((unsigned short *) file_size) = htons(numbertmp);
                             slen = strlen(file_size);
                         }
                         copy(bufptr + buff_size, flist->name, &len);

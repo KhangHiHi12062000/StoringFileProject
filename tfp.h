@@ -19,7 +19,7 @@
 #define ERROR	        '8'
 #define EXIT             '9'
 
-#define DATA_BLOCK 4096
+#define DATA_BLOCK 1024
 
 int GetRequestData(char *buff, char *opcode, char *filename, char *username, unsigned short *numBlock);
 char *eatString(char *buff, char *str);
