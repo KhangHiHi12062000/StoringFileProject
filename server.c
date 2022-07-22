@@ -13,7 +13,7 @@ void  socketThread(int  clientSocket)
         memset(client_message,0,BUFF_SIZE);
         if(recv(newSocket, client_message, BUFF_SIZE, 0)>0){
 //
-            printf("\n%s\n", client_message);
+            printf("\n message %s\n", client_message);
             //reset 1 buffer
             char buffer[BUFF_SIZE];
             cliptr = client_message;
@@ -76,7 +76,7 @@ void  socketThread(int  clientSocket)
                         //printf("%s\n", flist->name);
                         flist = flist->next;
                     }
-
+                    printf("listmessage:");
                     for (int i = 0; i < 100; ++i) {
                         printf("%c", buffer[i]);
                     }
@@ -111,9 +111,21 @@ void  socketThread(int  clientSocket)
                     upload_mess(newSocket, buffer, filename, cdirectory, numBlock);
                     break;
                 }
-                case DOWNLOAD:
-
+                case DOWNLOAD: {
+                    unsigned short numBlock;
+                    cliptr = eatString(cliptr + 1, filename);
+                    printf("%s\n",filename);
+                    char fullPath[BUFF_SIZE];
+                    memset(fullPath,0,BUFF_SIZE);
+                    strcat(fullPath,cdirectory);
+                    strcat(fullPath,"/");
+                    strcat(fullPath,filename);
+                    unsigned long numbBlock;
+                    numbBlock = fileSize(fullPath);
+                    numBlock = (unsigned short )(numbBlock/1024)+1;
+                    download_mess(newSocket,buffer, filename, cdirectory,numBlock);
                     break;
+                }
                 case DATA:
                     break;
                 case CONFIRM:

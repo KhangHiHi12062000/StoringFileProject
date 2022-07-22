@@ -97,13 +97,13 @@ int upload_mess(int sock, char *buff, char *filename,char *cdirectory, unsigned 
     while (next){
         memset(buff,0,BUFF_SIZE);
         n = recv(sock, buff, BUFF_SIZE, 0);
-        for (int i = 0; i < BUFF_SIZE; ++i) {
-            printf("%c",buff[i]);
-        }
-        printf("%d\n",n);
+//        for (int i = 0; i < BUFF_SIZE; ++i) {
+//            printf("%c",buff[i]);
+//        }
+//        printf("%d\n",n);
         int stat;
         printf("pack %u\n",packNum);
-        printf("unsi %u\n",ntohs(*((unsigned short*)(buff+1))));
+        //printf(" %u\n",ntohs(*((unsigned short*)(buff+1))));
 //        if(buff[0] == DATA){
 //            if(ntohs(*((unsigned short*)(buff+1)))==packNum){
 //                fwrite((buff+3), 1, (n-3), file);
@@ -125,6 +125,47 @@ int upload_mess(int sock, char *buff, char *filename,char *cdirectory, unsigned 
     if(!ok) removeFile(cdirectory, filename);
     return 0;
 }
+int download_mess(int sock, char *buff, char *filename, char *cdirectory, unsigned short numblock){
+    char tmp[255];
+    strcpy(tmp, cdirectory);
+    strcat(tmp, "/");
+    strcat(tmp, filename);
+
+    File *file=fopen(tmp, "rb");
+
+    if(file == NULL){
+        printf("Cannot read file!");
+        return 1;
+    }
+
+    buff[0] = CONFIRM;
+    *((short*)(buff+1))=htons(numblock);
+    send(sock, buff, 3, 0);
+    char bufferRecv[BUFF_SIZE];
+
+    int n;
+    int packNum=0;
+
+    while(!feof(file)){
+        memset(buff,0,BUFF_SIZE);
+        memset(bufferRecv,0,BUFF_SIZE);
+        ++packNum;
+        buff[0] = DATA;
+        *((unsigned short*)(buff+1))=htons(packNum);
+
+        n=fread((buff+3), 1, DATA_SIZE, file);
+//        for (int i = 0; i < BUFF_SIZE; ++i) {
+//            printf("%c",buff[i]);
+//        }
+//        printf("\n");
+        recv(sock, bufferRecv, BUFF_SIZE,0);
+        if (bufferRecv[0]==CONFIRM){
+                send(sock, buff, n+3, 0);
+        }
+    }
+    fclose(file);
+    return 0;
+}
 int copyfull(char *dest,char *src, int size){
     for (int i = 0; i < size; ++i) {
         dest[i] = src[i];
@@ -135,12 +176,3 @@ int removeMess(int sock, char *filename, char *cdirectory, char *buffer){
     removeFile(cdirectory,filename);
     return 0;
 }
-//void main(){
-//    char path[255]="/home/khangnt-leo/CLionProjects/ServerProject/Database/Tung/Hello.txt";
-//    char buff[255] = "ajsfd5khadfkhkahdfkjafk";
-//    FILE *file;
-//    file=fopen(path, "w+b");
-//    fwrite((buff+5),1, (strlen(buff)-5),file);
-//    fclose(file);
-//
-//}

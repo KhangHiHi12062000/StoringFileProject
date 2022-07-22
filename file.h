@@ -27,7 +27,7 @@ File* listFiles(char *path, unsigned short *numFile);
 int isExecutable(char *path);
 int isDir(char *path);
 int dirExist(char *dir);
-long fileSize(char *path);
+unsigned long fileSize(char *path);
 void freeFiles(File *files);
 void sizeToH(unsigned long size, char *buff, size_t max_len);
 void createNewFolder(char *path);

@@ -46,7 +46,7 @@ void freeFiles(File *files){
     }while(files!=NULL);
 }
 
-long fileSize(char *path){
+unsigned long fileSize(char *path){
     struct stat st;
     if(stat(path, &st)<0) return -1;
     return st.st_size;
