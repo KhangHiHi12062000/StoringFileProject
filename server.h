@@ -27,6 +27,6 @@
 
 #define SERVER_ROOT "/home/khangnt-leo/CLionProjects/ServerProject/Database"
 #define BUFF_SIZE 1+2+DATA_SIZE
-#define DATA_SIZE 1024
+#define DATA_SIZE 4096
 #define LIMIT 50
 #define PORT 8888

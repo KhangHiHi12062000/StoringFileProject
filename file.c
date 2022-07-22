@@ -119,11 +119,13 @@ void createNewFolder(char *path){
         }
     }
 }
-void removeFile(char* cdir, char *filename){
+int removeFile(char* cdir, char *filename){
     char tmp[256];
+    memset(tmp,0,255);
     strcpy(tmp, cdir);
     strcat(tmp, "/");
     strcat(tmp, filename);
 
     int ret=remove(tmp);
+    return ret;
 }

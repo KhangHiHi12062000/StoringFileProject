@@ -19,7 +19,7 @@
 #define ERROR	        '8'
 #define EXIT             '9'
 
-#define DATA_BLOCK 1024
+#define DATA_BLOCK 4096
 
 int GetRequestData(char *buff, char *opcode, char *filename, char *username, unsigned short *numBlock);
 char *eatString(char *buff, char *str);
@@ -32,4 +32,4 @@ int copy(char *dest, char *src, int *size);
 int copyfull(char *dest,char *src, int size);
 int comfirmMess(int sock, char *buff, int size, unsigned short numblock);
 int upload_mess(int sock, char *buff, char *filename,char *cdirectory , unsigned short numblock);
-
+int removeMess(int sock, char *filename, char *cdirectory, char *buffer);

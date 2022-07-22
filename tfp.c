@@ -16,8 +16,8 @@ char *eatByte(char *buff, unsigned short *numBlock){
 
     hi = buff[0];
     lo = buff[1];
-    //*numBlock = ((hi<<8)|lo);
-    *numBlock = hi * 2^8 + lo;
+    *numBlock = ((hi<<8)|lo);
+    //*numBlock = hi * 2^8 + lo;
     return buff+2;
 }
 
@@ -64,61 +64,58 @@ void create_Folder(char *path){
 }
 
 int comfirmMess(int sock, char *buff, int size, unsigned short numblock){
-
+    memset(buff,0,BUFF_SIZE);
     buff[0] = '6';
-    writeBytes(buff+1,numblock);
-
-    send(sock,buff, size,0);
+    send(sock,buff, 1,0);
     return 0;
 }
 int upload_mess(int sock, char *buff, char *filename,char *cdirectory, unsigned short numblock){
-    strcpy(buff, cdirectory);
-    strcat(buff, "/");
-    strcat(buff, filename);
+    char tmp[BUFF_SIZE];
+    strcpy(tmp, cdirectory);
+    strcat(tmp, "/");
+    strcat(tmp, filename);
 
-    FILE *file=fopen(buff, "r");
-
-    if(file!=NULL){
-        //send(sock,"File already exist.",50,0);
-        return 1;
-    }
-
-    file=fopen(buff, "w+b");
+    FILE *file;
+//    file = fopen(tmp, "r");
+//
+//    if(file!=NULL){
+//        return 1;
+//    }
+//    fclose(file);
+    file=fopen(tmp, "w+b");
     if(file==NULL){
-        //send(sock, "Write file error.", 50,0);
         return 1;
     }
 
     int n;
     int ok=0;
-    int packNum=0;
+    unsigned short packNum=0;
 
     comfirmMess(sock, buff, 0, packNum);
-    ++packNum;
-
-    int next = 1;
+    int next = 0;
+    if(numblock>0) next=1;
     while (next){
-        int i;
-        for(i=0 ; i<5 ; ++i){
-            n = recv(sock, buff, BUFF_SIZE, 0);
-            if(n == -1){
-                continue;
-            }
-            if(buff[0] != DATA) continue;
-            if(ntohs(*((unsigned short*)(buff+1)))==packNum) break;
+        memset(buff,0,BUFF_SIZE);
+        n = recv(sock, buff, BUFF_SIZE, 0);
+        for (int i = 0; i < BUFF_SIZE; ++i) {
+            printf("%c",buff[i]);
         }
-        if(i==5) break;
-
-        int stat=fwrite(buff+3, 1, n-3, file);
-        if(stat!=(n-3)){
-            //send(sock, "Error on write in file.", 50, 0);
-            break;
-        }
-        if(n<BUFF_SIZE){
-            ok=1;
-            break;
-        }
+        printf("%d\n",n);
+        int stat;
+        printf("pack %u\n",packNum);
+        printf("unsi %u\n",ntohs(*((unsigned short*)(buff+1))));
+//        if(buff[0] == DATA){
+//            if(ntohs(*((unsigned short*)(buff+1)))==packNum){
+//                fwrite((buff+3), 1, (n-3), file);
+//            }
+//        }
+        fwrite((buff+3), 1, (n-3), file);
         ++packNum;
+        comfirmMess(sock, buff, 0, packNum);
+        if(packNum>numblock) {
+            ok = 1;
+            break;
+        }
     }
     fclose(file);
 
@@ -131,23 +128,16 @@ int copyfull(char *dest,char *src, int size){
     }
     return 0;
 }
-//char *a(char *bu){
-//    return bu+2;
-//}
+int removeMess(int sock, char *filename, char *cdirectory, char *buffer){
+    removeFile(cdirectory,filename);
+    return 0;
+}
 //void main(){
-//    char bu[16];
-//    memset(bu,0,16);
-//    char bu2[16];
-//    char *p;
-//    p = bu2;
-//    memset(bu2,0,16);
-//    unsigned short num=300;
-//    *((unsigned short *) bu) = htons(num);
-//    printf("%u\n",bu[0]);
-//    printf("%u\n",bu[1]);
-//    printf("%s\n",bu);
-//    *(p+1)=bu[0];
-//    *(p+2)=bu[1];
-//    num = ntohs(*(unsigned short *)(p+1));
-//    printf("%u\n",num);
+//    char path[255]="/home/khangnt-leo/CLionProjects/ServerProject/Database/Tung/Hello.txt";
+//    char buff[255] = "ajsfd5khadfkhkahdfkjafk";
+//    FILE *file;
+//    file=fopen(path, "w+b");
+//    fwrite((buff+5),1, (strlen(buff)-5),file);
+//    fclose(file);
+//
 //}

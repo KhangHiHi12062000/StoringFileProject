@@ -10,7 +10,7 @@
 #include <string.h>
 #include "tfp.h"
 #define SERVER_ADDR "127.0.0.1"
-#define SERVER_PORT 8080
+#define SERVER_PORT 8888
 #define BUFF_SIZE 1027
 
 int main(){

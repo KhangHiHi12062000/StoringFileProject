@@ -10,13 +10,12 @@ void  socketThread(int  clientSocket)
     int newSocket = clientSocket;
     int loop = 1;
     while(loop) {
+        memset(client_message,0,BUFF_SIZE);
         if(recv(newSocket, client_message, BUFF_SIZE, 0)>0){
 //
             printf("\n%s\n", client_message);
-
             //reset 1 buffer
             char buffer[BUFF_SIZE];
-            //printf("%s",client_message);
             cliptr = client_message;
             bufptr = buffer;
             buff_size = 0;
@@ -38,24 +37,18 @@ void  socketThread(int  clientSocket)
                     sleep(0.2);
                     create_Folder(cdirectory);
                     //buffer="ok";
-                    strcpy(buffer, "ok!");
-                    buff_size+=4;
+                    strcpy(buffer, "Create Success");
+                    buff_size+=15;
                     send(newSocket, buffer, buff_size, 0);
                     break;
                 }
                 case LIST_DIR: {
-                    //cliptr = eatString(cliptr + 1, username);
-//                    strcpy(cdirectory, SERVER_ROOT);
-//                    strcat(cdirectory, "/");
-//                    strcat(cdirectory, username);
                     unsigned short numFile = 0;
                     char folder_size[16];
                     bufptr[0] = '2';
                     buff_size += 1;
                     File *list = listFiles(cdirectory,&numFile);
                     File *flist = list;
-                    //char *data = (char *) malloc(BUFF_SIZE * sizeof(char));
-                    //data[0] = 0;
                     *((unsigned short *) folder_size) = htons(numFile);
                     *(bufptr+buff_size) = folder_size[0];
                     *(bufptr+buff_size+1) = folder_size[1];
@@ -71,16 +64,9 @@ void  socketThread(int  clientSocket)
                             strcpy(file_size, "DIR");
                             slen = strlen(file_size);
                         } else {
-                            //                    sizeToH(flist->size, file_size, 16);
-                            //                    slen=strlen(file_size);
                             *((unsigned short *) file_size) = htons(flist->size);
                             slen = strlen(file_size);
-                            //printf("\n %d %d %s %u \n", file_size[0], file_size[1], file_size, flist->size);
                         }
-//                        if (size <= (nlen + slen + 1)) {
-//                            size = size + 512;
-//                            //data = (char *) realloc(data, size * sizeof(char));
-//                        }
                         copy(bufptr + buff_size, flist->name, &len);
                         buff_size = buff_size + len;
                         *(bufptr + buff_size) = file_size[0];
@@ -90,8 +76,6 @@ void  socketThread(int  clientSocket)
                         flist = flist->next;
                     }
 
-                    //strcpy(buffer, data);
-                    //copyfull(buffer, buffer, buff_size);
                     for (int i = 0; i < 100; ++i) {
                         printf("%c", buffer[i]);
                     }
@@ -105,15 +89,24 @@ void  socketThread(int  clientSocket)
                     break;
                 }
                 case RES_LIST_DIR:
-
+                {
+                    unsigned short number;
+                    number = ntohs(*(unsigned short *) cliptr);
+                    //eatByte(cliptr,&number);
+                    printf("number block %u\n", number);
+                    strcpy(buffer, "Create Success");
+                    buff_size+=15;
+                    send(newSocket, buffer, buff_size, 0);
                     break;
+                }
                 case UPLOAD: {
 
                     unsigned short numBlock;
                     cliptr = eatString(cliptr + 1, filename);
-                    //cliptr = eatByte(cliptr,&numBlock);
+                    printf("%s\n",filename);
                     numBlock = ntohs(*(unsigned short *) cliptr);
                     cliptr += 2;
+                    printf("%u\n",numBlock);
                     upload_mess(newSocket, buffer, filename, cdirectory, numBlock);
                     break;
                 }
@@ -125,25 +118,28 @@ void  socketThread(int  clientSocket)
                 case CONFIRM:
                     //numBlock = ntohs((unsigned short *)client_message+1);
                     break;
-                case DELETE:
-
+                case DELETE: {
+                    cliptr = eatString(cliptr + 1, filename);
+                    printf("%s\n",filename);
+                    fflush(stdout);
+                    removeMess(newSocket, filename, cdirectory, bufptr);
+                    strcpy(buffer, "Delete success!");
+                    send(newSocket, buffer, 16, 0);
                     break;
+                    }
                 case ERROR:
                     break;
                 case EXIT: {
                     loop = 0;
                     break;
                     }
-                default:
+                default: {
                     printf("\nopcode is not exist!!");
                     break;
+                }
             }
-//            for (int i = 0; i < 100 ;++i) {
-//                printf("%c", buffer[i]);
-//            }
             free(opcode);
             free(username);
-            //free(cdirectory);
             free(filename);
 
             pthread_mutex_unlock(&lock);

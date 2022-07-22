@@ -31,4 +31,4 @@ long fileSize(char *path);
 void freeFiles(File *files);
 void sizeToH(unsigned long size, char *buff, size_t max_len);
 void createNewFolder(char *path);
-void removeFile(char* cdir, char *filename);
+int removeFile(char* cdir, char *filename);
